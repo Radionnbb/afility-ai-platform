@@ -12,6 +12,9 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Search, Upload, LinkIcon, Sparkles, Zap, ImageIcon, Loader2, Camera, Globe, Type } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { AnimatePresence } from "framer-motion"
+import { WebPreview } from "@/components/web-preview"
+import { LiveAgentView } from "@/components/live-agent-view"
 
 export default function SearchPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -22,6 +25,11 @@ export default function SearchPage() {
   const [activeTab, setActiveTab] = useState("text")
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
+
+  const [showPreview, setShowPreview] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState("")
+  const [isPreviewExpanded, setIsPreviewExpanded] = useState(false)
+  const [showLiveAgent, setShowLiveAgent] = useState(false)
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -55,7 +63,7 @@ export default function SearchPage() {
         const reader = new FileReader()
         reader.onload = async (e) => {
           searchData.imageData = e.target?.result as string
-          await performSearch(searchData)
+          await performSearch(searchData, type)
         }
         reader.readAsDataURL(imageFile)
         return
@@ -65,33 +73,58 @@ export default function SearchPage() {
           return
         }
         searchData.url = urlInput
+        setPreviewUrl(urlInput)
+        setShowPreview(true)
+        setIsPreviewExpanded(true)
       }
 
-      await performSearch(searchData)
+      await performSearch(searchData, type)
     } catch (error) {
       console.error("Search error:", error)
       alert("Search failed. Please try again.")
-    } finally {
       setIsLoading(false)
+      setShowPreview(false)
+      setShowLiveAgent(false)
     }
   }
 
-  const performSearch = async (searchData: any) => {
-    const response = await fetch("/api/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(searchData),
-    })
+  const performSearch = async (searchData: any, type: string) => {
+    try {
+      const response = await fetch("/api/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(searchData),
+      })
 
-    if (response.ok) {
-      const results = await response.json()
-      // Store results in sessionStorage and navigate to results page
-      sessionStorage.setItem("searchResults", JSON.stringify(results))
-      router.push("/results")
-    } else {
-      throw new Error("Search failed")
+      if (response.ok) {
+        const results = await response.json()
+
+        // Animate sequence: collapse preview → show live agent → navigate
+        setTimeout(() => {
+          setIsPreviewExpanded(false)
+        }, 1000)
+
+        setTimeout(() => {
+          setShowPreview(false)
+          setShowLiveAgent(true)
+        }, 1600)
+
+        setTimeout(() => {
+          setShowLiveAgent(false)
+          sessionStorage.setItem("searchResults", JSON.stringify(results))
+          router.push("/results")
+        }, 4000)
+      } else {
+        throw new Error("Search failed")
+      }
+    } catch (error) {
+      console.error("Search error:", error)
+      alert("Search failed. Please try again.")
+      setIsLoading(false)
+      setShowPreview(false)
+      setShowLiveAgent(false)
     }
   }
 
@@ -121,6 +154,23 @@ export default function SearchPage() {
             Search by text, upload an image, or paste a product URL. Our AI will find you the best deals instantly.
           </p>
         </div>
+
+        <AnimatePresence>
+          {showPreview && (
+            <div className="mb-8 flex justify-center">
+              <WebPreview
+                url={previewUrl}
+                isExpanded={isPreviewExpanded}
+                onClose={() => {
+                  setShowPreview(false)
+                  setIsPreviewExpanded(false)
+                }}
+              />
+            </div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>{showLiveAgent && <LiveAgentView isVisible={showLiveAgent} />}</AnimatePresence>
 
         {/* Search Interface */}
         <Card className="border-gray-800 bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl shadow-2xl">

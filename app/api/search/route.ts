@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { analyzeWithGemini } from "@/lib/real-ai-services"
+import { calculateSavings } from "@/lib/utils/savings"
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,13 +9,13 @@ export async function POST(request: NextRequest) {
     let searchResults = []
     let productInfo = null
 
-    // Analyze based on search type
+    // Analyze based on search type using OpenAI
     if (type === "text") {
-      productInfo = await analyzeWithGemini(`Find product information for: ${query}`)
+      productInfo = await analyzeWithOpenAI(`Find product information for: ${query}`)
     } else if (type === "image") {
-      productInfo = await analyzeWithGemini(`Analyze this product image: ${imageData}`)
+      productInfo = await analyzeWithOpenAI(`Analyze this product image: ${imageData}`)
     } else if (type === "url") {
-      productInfo = await analyzeWithGemini(`Analyze product from URL: ${url}`)
+      productInfo = await analyzeWithOpenAI(`Analyze product from URL: ${url}`)
     }
 
     // Generate mock search results with 10% discount
@@ -54,6 +54,10 @@ export async function POST(request: NextRequest) {
       })
       .sort((a, b) => a.discountedPrice - b.discountedPrice)
 
+    const cheapestProduct = searchResults[0]
+    const originalPrice = searchResults[searchResults.length - 1]?.originalPrice || cheapestProduct.originalPrice
+    const savingsData = calculateSavings(originalPrice, cheapestProduct.discountedPrice)
+
     return NextResponse.json({
       success: true,
       data: {
@@ -61,11 +65,51 @@ export async function POST(request: NextRequest) {
         results: searchResults,
         totalResults: searchResults.length,
         searchType: type,
+        savings: {
+          amount: savingsData.saved,
+          percent: savingsData.percent,
+          originalPrice: originalPrice,
+          cheapestPrice: cheapestProduct.discountedPrice,
+        },
       },
     })
   } catch (error) {
     console.error("Search API Error:", error)
     return NextResponse.json({ success: false, message: "Search failed" }, { status: 500 })
+  }
+}
+
+async function analyzeWithOpenAI(prompt: string) {
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        temperature: 0.7,
+      }),
+    })
+
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content || ""
+
+    try {
+      return JSON.parse(content)
+    } catch {
+      return { analysis: content }
+    }
+  } catch (error) {
+    console.error("OpenAI Error:", error)
+    return { error: "AI analysis failed" }
   }
 }
 

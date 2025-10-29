@@ -1,65 +1,100 @@
-import { GoogleGenerativeAI } from "@google/generative-ai"
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-
-export async function analyzeWithGemini(prompt: string) {
+export async function analyzeWithOpenAI(prompt: string) {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" })
-    const result = await model.generateContent(prompt)
-    const response = await result.response
-    const text = response.text()
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 1000,
+      }),
+    })
 
-    // Try to parse as JSON, fallback to text
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content || ""
+
     try {
-      return JSON.parse(text)
+      return JSON.parse(content)
     } catch {
-      return { analysis: text }
+      return { analysis: content }
     }
   } catch (error) {
-    console.error("Gemini AI Error:", error)
+    console.error("OpenAI Error:", error)
     return { error: "AI analysis failed" }
   }
 }
 
-export async function analyzeImageWithGemini(base64Image: string) {
+export async function analyzeImageWithOpenAI(base64Image: string) {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" })
-
-    const prompt = `Analyze this product image and return JSON with:
-    {
-      "productName": "name of the product",
-      "description": "detailed description",
-      "category": "product category",
-      "estimatedPrice": "price range",
-      "features": ["feature1", "feature2"],
-      "confidence": 0.9
-    }`
-
-    const result = await model.generateContent([
-      prompt,
-      {
-        inlineData: {
-          data: base64Image,
-          mimeType: "image/jpeg",
-        },
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
-    ])
+      body: JSON.stringify({
+        model: "gpt-4-vision-preview",
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `Analyze this product image and return JSON with:
+                {
+                  "productName": "name of the product",
+                  "description": "detailed description",
+                  "category": "product category",
+                  "estimatedPrice": "price range",
+                  "features": ["feature1", "feature2"],
+                  "confidence": 0.9
+                }`,
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:image/jpeg;base64,${base64Image}`,
+                },
+              },
+            ],
+          },
+        ],
+        max_tokens: 1000,
+      }),
+    })
 
-    const response = await result.response
-    const text = response.text()
+    if (!response.ok) {
+      throw new Error(`OpenAI Vision API error: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content || ""
 
     try {
-      return JSON.parse(text)
+      return JSON.parse(content)
     } catch {
       return {
         productName: "Product from Image",
-        description: text,
+        description: content,
         category: "General",
         confidence: 0.7,
       }
     }
   } catch (error) {
-    console.error("Gemini Vision Error:", error)
+    console.error("OpenAI Vision Error:", error)
     return {
       productName: "Unknown Product",
       description: "Image analysis failed",
@@ -69,32 +104,50 @@ export async function analyzeImageWithGemini(base64Image: string) {
   }
 }
 
-export async function analyzeUrlWithGemini(url: string) {
+export async function analyzeUrlWithOpenAI(url: string) {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" })
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "user",
+            content: `Analyze this product URL and extract information: ${url}
+            Return JSON with:
+            {
+              "productName": "name of the product",
+              "description": "product description",
+              "price": "product price",
+              "category": "product category",
+              "features": ["feature1", "feature2"],
+              "store": "store name",
+              "availability": "availability status"
+            }`,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 1000,
+      }),
+    })
 
-    const prompt = `Analyze this product URL and extract information: ${url}
-    Return JSON with:
-    {
-      "productName": "name of the product",
-      "description": "product description",
-      "price": "product price",
-      "category": "product category",
-      "features": ["feature1", "feature2"],
-      "store": "store name",
-      "availability": "availability status"
-    }`
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.statusText}`)
+    }
 
-    const result = await model.generateContent(prompt)
-    const response = await result.response
-    const text = response.text()
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content || ""
 
     try {
-      return JSON.parse(text)
+      return JSON.parse(content)
     } catch {
       return {
         productName: "Product from URL",
-        description: text,
+        description: content,
         category: "General",
         store: "Online Store",
       }
@@ -109,3 +162,7 @@ export async function analyzeUrlWithGemini(url: string) {
     }
   }
 }
+
+export const analyzeWithGemini = analyzeWithOpenAI
+export const analyzeImageWithGemini = analyzeImageWithOpenAI
+export const analyzeUrlWithGemini = analyzeUrlWithOpenAI

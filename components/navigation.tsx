@@ -5,14 +5,11 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Zap } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navItems = [
   { name: "Home", href: "/" },
   { name: "Search", href: "/search" },
-  { name: "About", href: "/about" },
-  { name: "Privacy", href: "/privacy" },
   { name: "Profile", href: "/profile" },
 ]
 
@@ -27,10 +24,10 @@ export default function Navigation() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 group">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 group-hover:from-blue-400 group-hover:to-blue-500 transition-all duration-300 shadow-lg">
-              <Zap className="h-5 w-5 text-white" />
+              <span className="text-white font-bold text-sm">⚡</span>
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              Afility.AI
+              SaveAI
             </span>
           </Link>
 
@@ -64,8 +61,8 @@ export default function Navigation() {
               className="text-gray-300 hover:text-white hover:bg-gray-800/60 border border-transparent hover:border-gray-700/50 transition-all duration-300 rounded-lg px-4 py-2"
               asChild
             >
-              <Link href="/login" onClick={() => setIsOpen(false)}>
-                Login
+              <Link href="/signin" onClick={() => setIsOpen(false)}>
+                Sign In
               </Link>
             </Button>
             <Button
@@ -82,7 +79,7 @@ export default function Navigation() {
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white hover:bg-gray-800">
-                <Menu className="h-5 w-5" />
+                <span className="text-xl">☰</span>
               </Button>
             </SheetTrigger>
             <SheetContent
@@ -113,8 +110,8 @@ export default function Navigation() {
                     className="justify-start text-gray-300 hover:text-white hover:bg-gray-800/60 border border-transparent hover:border-gray-700/50 rounded-lg h-12"
                     asChild
                   >
-                    <Link href="/login" onClick={() => setIsOpen(false)}>
-                      Login
+                    <Link href="/signin" onClick={() => setIsOpen(false)}>
+                      Sign In
                     </Link>
                   </Button>
                   <Button

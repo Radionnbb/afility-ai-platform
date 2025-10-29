@@ -17,6 +17,16 @@ import {
   ShoppingCart,
   Edit,
 } from "lucide-react"
+import { useEffect, useState } from "react"
+import { calculateTotalSavings } from "@/lib/utils/savings"
+
+interface SearchRecord {
+  id: string
+  query: string
+  created_at: string
+  savings?: number
+  savings_percent?: number
+}
 
 const activityData = [
   { date: "2024-01-15", action: "Used Coupon", details: "20% off iPhone case", savings: "$15.99" },
@@ -27,6 +37,19 @@ const activityData = [
 ]
 
 export default function ProfilePage() {
+  const [totalSavings, setTotalSavings] = useState<number>(0)
+  const [searchHistory, setSearchHistory] = useState<SearchRecord[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const mockSearches = activityData.map((activity) => ({
+      savings: Number.parseFloat(activity.savings.replace("$", "")),
+    }))
+    const total = calculateTotalSavings(mockSearches)
+    setTotalSavings(total)
+    setIsLoading(false)
+  }, [])
+
   return (
     <div className="min-h-screen py-6 sm:py-8 lg:py-12 bg-gradient-to-br from-black via-gray-900 to-black">
       {/* Background Effects */}
@@ -56,6 +79,24 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6 lg:space-y-8">
+            <Card className="border-green-600/50 bg-gradient-to-br from-green-900/20 to-green-800/10 backdrop-blur-xl">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-white text-lg sm:text-xl">
+                  <DollarSign className="w-5 h-5 text-green-400" />
+                  Total Money Saved
+                </CardTitle>
+                <CardDescription className="text-green-300/70">
+                  Your cumulative savings across all searches
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-4xl sm:text-5xl font-bold text-green-400 mb-2">
+                  ${isLoading ? "0.00" : totalSavings.toFixed(2)}
+                </div>
+                <p className="text-sm text-gray-400">Based on {activityData.length} searches and transactions</p>
+              </CardContent>
+            </Card>
+
             {/* Profile Info Card */}
             <Card className="border-gray-800 bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl">
               <CardHeader className="pb-4">
@@ -111,7 +152,9 @@ export default function ProfilePage() {
                   <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-r from-green-500/20 to-green-600/20 rounded-full flex items-center justify-center mb-3 sm:mb-4">
                     <DollarSign className="w-6 h-6 sm:w-7 sm:h-7 text-green-400" />
                   </div>
-                  <div className="text-2xl sm:text-3xl font-bold text-white">$154.47</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-white">
+                    ${isLoading ? "0.00" : totalSavings.toFixed(2)}
+                  </div>
                   <div className="text-sm sm:text-base text-gray-400">Total Money Saved</div>
                 </CardContent>
               </Card>
@@ -121,7 +164,7 @@ export default function ProfilePage() {
                   <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-r from-blue-500/20 to-blue-600/20 rounded-full flex items-center justify-center mb-3 sm:mb-4">
                     <Package className="w-6 h-6 sm:w-7 sm:h-7 text-blue-400" />
                   </div>
-                  <div className="text-2xl sm:text-3xl font-bold text-white">12</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-white">{activityData.length}</div>
                   <div className="text-sm sm:text-base text-gray-400">Successful Purchases</div>
                 </CardContent>
               </Card>
