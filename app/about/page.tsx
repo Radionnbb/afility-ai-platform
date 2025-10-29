@@ -113,7 +113,7 @@ export default function AboutPage() {
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-blue-600/10 border border-blue-500/20 mb-6">
               <Sparkles className="w-4 h-4 text-blue-400 mr-2" />
-              <span className="text-sm text-blue-400 font-medium">About Afility.AI</span>
+              <span className="text-sm text-blue-400 font-medium">About SaveAI</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
@@ -239,7 +239,7 @@ export default function AboutPage() {
       <section className="py-20 bg-gradient-to-b from-black to-gray-900">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">How Afility.AI Works</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">How SaveAI Works</h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
               Our advanced AI technology makes finding cheaper alternatives as simple as 1-2-3
             </p>
@@ -273,7 +273,7 @@ export default function AboutPage() {
       <section className="py-20 bg-gradient-to-b from-gray-900 to-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Why Choose Afility.AI?</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Why Choose SaveAI?</h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
               Cutting-edge technology meets user-friendly design to deliver the ultimate shopping experience
             </p>
@@ -336,7 +336,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Ready to Start Saving?</h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of smart shoppers who save money every day with Afility.AI
+            Join thousands of smart shoppers who save money every day with SaveAI
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button

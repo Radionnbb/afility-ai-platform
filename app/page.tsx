@@ -44,7 +44,7 @@ export default function HomePage() {
                   className="text-lg px-8 py-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 shadow-lg hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105"
                   asChild
                 >
-                  <Link href="/signup">Start Free Search</Link>
+                  <Link href="/search">Start Free Search</Link>
                 </Button>
                 <Button
                   size="lg"
@@ -52,7 +52,7 @@ export default function HomePage() {
                   className="text-lg px-8 py-6 border-gray-600 text-gray-300 hover:text-white hover:bg-gray-800 hover:border-gray-500 transition-all duration-300 bg-transparent"
                   asChild
                 >
-                  <Link href="/login">Login</Link>
+                  <Link href="/signin">Sign In</Link>
                 </Button>
               </div>
             </div>
@@ -92,7 +92,7 @@ export default function HomePage() {
       <section className="py-20 bg-gradient-to-b from-black to-gray-900">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Why Choose Afility.AI?</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Why Choose SaveAI?</h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
               Save money effortlessly with our AI-powered alternative finder
             </p>
@@ -141,7 +141,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Ready to Start Saving?</h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of smart shoppers who save money every day with Afility.AI
+            Join thousands of smart shoppers who save money every day with SaveAI
           </p>
           <Button
             size="lg"
@@ -164,7 +164,7 @@ export default function HomePage() {
                   <Zap className="h-5 w-5 text-white" />
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                  Afility.AI
+                  SaveAI
                 </span>
               </div>
               <p className="text-gray-400">AI-powered platform to find cheaper product alternatives instantly.</p>
@@ -179,8 +179,8 @@ export default function HomePage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/about" className="hover:text-blue-400 transition-colors">
-                    About
+                  <Link href="/" className="hover:text-blue-400 transition-colors">
+                    Home
                   </Link>
                 </li>
               </ul>
@@ -190,18 +190,13 @@ export default function HomePage() {
               <h3 className="font-semibold mb-4 text-white">Company</h3>
               <ul className="space-y-2 text-gray-400">
                 <li>
-                  <Link href="/about" className="hover:text-blue-400 transition-colors">
+                  <Link href="/" className="hover:text-blue-400 transition-colors">
                     About
                   </Link>
                 </li>
                 <li>
-                  <Link href="/contact" className="hover:text-blue-400 transition-colors">
+                  <Link href="/" className="hover:text-blue-400 transition-colors">
                     Contact
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/privacy" className="hover:text-blue-400 transition-colors">
-                    Privacy
                   </Link>
                 </li>
               </ul>
@@ -220,17 +215,12 @@ export default function HomePage() {
                     LinkedIn
                   </a>
                 </li>
-                <li>
-                  <a href="#" className="hover:text-blue-400 transition-colors">
-                    Discord
-                  </a>
-                </li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Afility.AI. All rights reserved.</p>
+            <p>&copy; 2025 SaveAI. All rights reserved.</p>
           </div>
         </div>
       </footer>

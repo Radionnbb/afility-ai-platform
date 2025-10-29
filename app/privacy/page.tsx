@@ -373,7 +373,7 @@ export default function PrivacyPage() {
                   <Mail className="w-6 h-6 text-blue-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Email</h3>
-                <p className="text-gray-400">privacy@afility.ai</p>
+                <p className="text-gray-400">privacy@saveai.io</p>
               </CardContent>
             </Card>
 
@@ -406,7 +406,7 @@ export default function PrivacyPage() {
         <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Ready to Shop Securely?</h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Your privacy is protected. Start finding better deals with confidence using Afility.AI
+            Your privacy is protected. Start finding better deals with confidence using SaveAI
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
