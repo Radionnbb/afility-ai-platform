@@ -16,9 +16,12 @@ import {
   TrendingUp,
   ShoppingCart,
   Edit,
+  BarChart3,
+  Link2,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { calculateTotalSavings } from "@/lib/utils/savings"
+import Link from "next/link"
 
 interface SearchRecord {
   id: string
@@ -28,21 +31,40 @@ interface SearchRecord {
   savings_percent?: number
 }
 
-const activityData = [
-  { date: "2024-01-15", action: "Used Coupon", details: "20% off iPhone case", savings: "$15.99" },
-  { date: "2024-01-12", action: "Made Purchase", details: "Samsung Galaxy Buds", savings: "$45.00" },
-  { date: "2024-01-08", action: "Used Coupon", details: "15% off laptop stand", savings: "$12.50" },
-  { date: "2024-01-05", action: "Made Purchase", details: "Wireless mouse", savings: "$8.99" },
-  { date: "2024-01-03", action: "Used Coupon", details: "10% off headphones", savings: "$25.00" },
-]
+interface TrackingData {
+  totalClicks: number
+  totalConversions: number
+  totalCommission: number
+  conversionRate: number
+  recentActivity: Array<{
+    date: string
+    action: string
+    details: string
+    savings: string
+  }>
+}
+
+const mockTrackingData: TrackingData = {
+  totalClicks: 47,
+  totalConversions: 12,
+  totalCommission: 156.75,
+  conversionRate: 25.5,
+  recentActivity: [
+    { date: "2024-01-15", action: "Purchase Confirmed", details: "iPhone 15 Pro Max", savings: "$89.99" },
+    { date: "2024-01-12", action: "Click Tracked", details: "Samsung Galaxy Buds", savings: "$45.00" },
+    { date: "2024-01-08", action: "Purchase Confirmed", details: "MacBook Air M3", savings: "$120.50" },
+    { date: "2024-01-05", action: "Click Tracked", details: "Wireless mouse", savings: "$8.99" },
+    { date: "2024-01-03", action: "Purchase Confirmed", details: "iPad Pro 12.9", savings: "$95.00" },
+  ],
+}
 
 export default function ProfilePage() {
   const [totalSavings, setTotalSavings] = useState<number>(0)
-  const [searchHistory, setSearchHistory] = useState<SearchRecord[]>([])
+  const [trackingData, setTrackingData] = useState<TrackingData>(mockTrackingData)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const mockSearches = activityData.map((activity) => ({
+    const mockSearches = mockTrackingData.recentActivity.map((activity) => ({
       savings: Number.parseFloat(activity.savings.replace("$", "")),
     }))
     const total = calculateTotalSavings(mockSearches)
@@ -52,14 +74,12 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen py-6 sm:py-8 lg:py-12 bg-gradient-to-br from-black via-gray-900 to-black">
-      {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-10 sm:top-20 right-10 sm:right-20 w-40 sm:w-60 h-40 sm:h-60 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 sm:bottom-20 left-10 sm:left-20 w-40 sm:w-60 h-40 sm:h-60 bg-blue-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
-        {/* Header */}
         <div className="mb-8 sm:mb-12">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
             <Avatar className="h-12 w-12 sm:h-16 sm:w-16 bg-gradient-to-r from-blue-500 to-blue-600 flex-shrink-0">
@@ -77,7 +97,6 @@ export default function ProfilePage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          {/* Left Column */}
           <div className="lg:col-span-2 space-y-6 lg:space-y-8">
             <Card className="border-green-600/50 bg-gradient-to-br from-green-900/20 to-green-800/10 backdrop-blur-xl">
               <CardHeader className="pb-4">
@@ -86,14 +105,14 @@ export default function ProfilePage() {
                   Total Money Saved
                 </CardTitle>
                 <CardDescription className="text-green-300/70">
-                  Your cumulative savings across all searches
+                  Your cumulative savings across all searches and purchases
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-4xl sm:text-5xl font-bold text-green-400 mb-2">
                   ${isLoading ? "0.00" : totalSavings.toFixed(2)}
                 </div>
-                <p className="text-sm text-gray-400">Based on {activityData.length} searches and transactions</p>
+                <p className="text-sm text-gray-400">Based on {trackingData.recentActivity.length} transactions</p>
               </CardContent>
             </Card>
 
@@ -164,8 +183,42 @@ export default function ProfilePage() {
                   <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-r from-blue-500/20 to-blue-600/20 rounded-full flex items-center justify-center mb-3 sm:mb-4">
                     <Package className="w-6 h-6 sm:w-7 sm:h-7 text-blue-400" />
                   </div>
-                  <div className="text-2xl sm:text-3xl font-bold text-white">{activityData.length}</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-white">{trackingData.recentActivity.length}</div>
                   <div className="text-sm sm:text-base text-gray-400">Successful Purchases</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <Card className="border-gray-800 bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300">
+                <CardContent className="p-4 sm:p-6 text-center">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-r from-blue-500/20 to-blue-600/20 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                    <Link2 className="w-6 h-6 sm:w-7 sm:h-7 text-blue-400" />
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-bold text-white">{trackingData.totalClicks}</div>
+                  <div className="text-sm sm:text-base text-gray-400">Total Clicks</div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-gray-800 bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300">
+                <CardContent className="p-4 sm:p-6 text-center">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-r from-green-500/20 to-green-600/20 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                    <ShoppingCart className="w-6 h-6 sm:w-7 sm:h-7 text-green-400" />
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-bold text-white">{trackingData.totalConversions}</div>
+                  <div className="text-sm sm:text-base text-gray-400">Conversions</div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-gray-800 bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300">
+                <CardContent className="p-4 sm:p-6 text-center">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-r from-purple-500/20 to-purple-600/20 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                    <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 text-purple-400" />
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-bold text-white">
+                    {trackingData.conversionRate.toFixed(1)}%
+                  </div>
+                  <div className="text-sm sm:text-base text-gray-400">Conversion Rate</div>
                 </CardContent>
               </Card>
             </div>
@@ -197,7 +250,7 @@ export default function ProfilePage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {activityData.map((activity, index) => (
+                      {trackingData.recentActivity.map((activity, index) => (
                         <TableRow key={index} className="border-gray-700 hover:bg-gray-800/50">
                           <TableCell className="text-gray-400 text-xs sm:text-sm px-2 sm:px-4">
                             <div className="sm:hidden">
@@ -229,7 +282,6 @@ export default function ProfilePage() {
 
           {/* Right Column */}
           <div className="space-y-6 lg:space-y-8">
-            {/* Account Controls */}
             <Card className="border-gray-800 bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-white text-lg sm:text-xl">
@@ -242,15 +294,18 @@ export default function ProfilePage() {
                   variant="outline"
                   className="w-full border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white hover:border-gray-500 transition-all duration-300 bg-transparent text-sm sm:text-base"
                 >
-                  <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                  Account Settings
+                  <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+                  View Analytics
                 </Button>
                 <Button
                   variant="outline"
                   className="w-full border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white hover:border-gray-500 transition-all duration-300 bg-transparent text-sm sm:text-base"
+                  asChild
                 >
-                  <User className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                  Privacy Settings
+                  <Link href="/notifications">
+                    <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+                    Notifications
+                  </Link>
                 </Button>
                 <Button
                   variant="outline"
@@ -262,7 +317,6 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            {/* Quick Actions */}
             <Card className="border-gray-800 bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-white text-lg sm:text-xl">
@@ -271,9 +325,14 @@ export default function ProfilePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 transition-all duration-300 text-sm sm:text-base">
-                  <Package className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                  Start New Search
+                <Button
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 transition-all duration-300 text-sm sm:text-base"
+                  asChild
+                >
+                  <Link href="/search">
+                    <Package className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+                    Start New Search
+                  </Link>
                 </Button>
                 <Button
                   variant="outline"
